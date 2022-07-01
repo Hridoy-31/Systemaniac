@@ -35,4 +35,16 @@ import os
 import os.path
 
 logger = logging.getLogger(__name__)
-  
+
+if os.name == 'nt':
+    # for supporting common windows types
+    from pywintypes import error as winerror
+    # for operations on windows file systems
+    import win32file
+    import systemaniac.Windows
+    # for checking the given path represents an existing directory
+    # which is a symbolic link or not 
+    os_path_islink = os.path.islink
+    os.path.islink = lambda path: os_path_islink(
+        path) or systemaniac.Windows.is_junction(path)
+    
